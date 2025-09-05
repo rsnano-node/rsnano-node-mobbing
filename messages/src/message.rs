@@ -25,7 +25,7 @@ pub enum Message {
     SnapshotPreproposal(Preproposal),
 }
 
-pub trait MessageVariant: Display {
+pub trait MessageVariant {
     fn header_extensions(&self, _payload_len: u16) -> BitArray<u16> {
         Default::default()
     }
@@ -229,15 +229,6 @@ impl Message {
         };
 
         Ok(msg)
-    }
-}
-
-impl Display for Message {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.as_message_variant() {
-            Some(variant) => variant.fmt(f),
-            None => Ok(()),
-        }
     }
 }
 

@@ -6,8 +6,8 @@ use serde::ser::SerializeStruct;
 use serde_derive::Serialize;
 
 use rsnano_types::{
-    Account, Block, BlockHash, BlockType, BlockTypeId, DeserializationError, Frontier, read_u8,
-    read_u64_be,
+    read_u64_be, read_u8, Account, Block, BlockHash, BlockType, BlockTypeId, DeserializationError,
+    Frontier,
 };
 use rsnano_utils::stats::DetailType;
 
@@ -307,7 +307,7 @@ impl From<&AscPullAckType> for DetailType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Message, assert_deserializable};
+    use crate::{assert_deserializable, Message};
     use rsnano_types::TestBlockBuilder;
 
     #[test]
@@ -351,24 +351,5 @@ mod tests {
         });
 
         assert_deserializable(&original);
-    }
-
-    #[test]
-    fn display() {
-        let ack = Message::AscPullAck(AscPullAck {
-            id: 7,
-            pull_type: AscPullAckType::AccountInfo(AccountInfoAckPayload {
-                account: Account::from(1),
-                account_open: BlockHash::from(2),
-                account_head: BlockHash::from(3),
-                account_block_count: 4,
-                account_conf_frontier: BlockHash::from(5),
-                account_conf_height: 6,
-            }),
-        });
-        assert_eq!(
-            ack.to_string(),
-            "\naccount public key:nano_1111111111111111111111111111111111111111111111111113b8661hfk account open:0000000000000000000000000000000000000000000000000000000000000002 account head:0000000000000000000000000000000000000000000000000000000000000003 block count:4 confirmation frontier:0000000000000000000000000000000000000000000000000000000000000005 confirmation height:6"
-        );
     }
 }

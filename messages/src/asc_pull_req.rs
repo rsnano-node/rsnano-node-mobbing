@@ -4,7 +4,7 @@ use bitvec::prelude::BitArray;
 use num_traits::FromPrimitive;
 use serde_derive::Serialize;
 
-use rsnano_types::{Account, BlockHash, DeserializationError, HashOrAccount, read_u8, read_u64_be};
+use rsnano_types::{read_u64_be, read_u8, Account, BlockHash, DeserializationError, HashOrAccount};
 use rsnano_utils::stats::DetailType;
 
 use super::MessageVariant;
@@ -299,7 +299,7 @@ impl From<&AscPullReqType> for DetailType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Message, assert_deserializable};
+    use crate::{assert_deserializable, Message};
 
     #[test]
     fn serialize_blocks() {
@@ -338,36 +338,5 @@ mod tests {
             }),
         });
         assert_deserializable(&original);
-    }
-
-    #[test]
-    fn display_blocks_payload() {
-        let req = Message::AscPullReq(AscPullReq {
-            req_type: AscPullReqType::Blocks(BlocksReqPayload {
-                start: 1.into(),
-                count: 2,
-                start_type: HashType::Block,
-            }),
-            id: 7,
-        });
-        assert_eq!(
-            req.to_string(),
-            "\nacc:0000000000000000000000000000000000000000000000000000000000000001 max block count:2 hash type: 1"
-        );
-    }
-
-    #[test]
-    fn display_account_info_payload() {
-        let req = Message::AscPullReq(AscPullReq {
-            req_type: AscPullReqType::AccountInfo(AccountInfoReqPayload {
-                target: HashOrAccount::from(123),
-                target_type: HashType::Block,
-            }),
-            id: 7,
-        });
-        assert_eq!(
-            req.to_string(),
-            "\ntarget:000000000000000000000000000000000000000000000000000000000000007B hash type:1"
-        );
     }
 }

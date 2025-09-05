@@ -93,7 +93,7 @@ mod tests {
     use std::str::FromStr;
 
     use super::*;
-    use crate::{Message, assert_deserializable};
+    use crate::{assert_deserializable, Message};
 
     #[test]
     fn serialize_no_peers() {
@@ -107,45 +107,5 @@ mod tests {
         keepalive.peers[0] = SocketAddrV6::new(Ipv6Addr::LOCALHOST, 10000, 0, 0);
         let request = Message::Keepalive(keepalive);
         assert_deserializable(&request);
-    }
-
-    #[test]
-    fn keepalive_with_no_peers_to_string() {
-        let keepalive = Message::Keepalive(Default::default());
-        let expected = "\n[::]:0\n[::]:0\n[::]:0\n[::]:0\n[::]:0\n[::]:0\n[::]:0\n[::]:0";
-        assert_eq!(keepalive.to_string(), expected);
-    }
-
-    #[test]
-    fn keepalive_string() {
-        let mut keepalive = Keepalive::default();
-        keepalive.peers[1] = SocketAddrV6::new(Ipv6Addr::LOCALHOST, 45, 0, 0);
-        keepalive.peers[2] = SocketAddrV6::new(
-            Ipv6Addr::from_str("2001:db8:85a3:8d3:1319:8a2e:370:7348").unwrap(),
-            0,
-            0,
-            0,
-        );
-        keepalive.peers[3] = SocketAddrV6::new(Ipv6Addr::UNSPECIFIED, 65535, 0, 0);
-        keepalive.peers[4] =
-            SocketAddrV6::new(Ipv6Addr::from_str("::ffff:1.2.3.4").unwrap(), 1234, 0, 0);
-        keepalive.peers[5] =
-            SocketAddrV6::new(Ipv6Addr::from_str("::ffff:1.2.3.4").unwrap(), 1234, 0, 0);
-        keepalive.peers[6] =
-            SocketAddrV6::new(Ipv6Addr::from_str("::ffff:1.2.3.4").unwrap(), 1234, 0, 0);
-        keepalive.peers[7] =
-            SocketAddrV6::new(Ipv6Addr::from_str("::ffff:1.2.3.4").unwrap(), 1234, 0, 0);
-
-        let mut expected = String::new();
-        expected.push_str("\n[::]:0");
-        expected.push_str("\n[::1]:45");
-        expected.push_str("\n[2001:db8:85a3:8d3:1319:8a2e:370:7348]:0");
-        expected.push_str("\n[::]:65535");
-        expected.push_str("\n[::ffff:1.2.3.4]:1234");
-        expected.push_str("\n[::ffff:1.2.3.4]:1234");
-        expected.push_str("\n[::ffff:1.2.3.4]:1234");
-        expected.push_str("\n[::ffff:1.2.3.4]:1234");
-
-        assert_eq!(keepalive.to_string(), expected);
     }
 }
