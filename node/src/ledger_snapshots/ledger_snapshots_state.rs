@@ -218,4 +218,34 @@ mod tests {
         assert_eq!(state.proposal_aggregator.len(), 0, "proposals not cleared");
         assert_eq!(state.vote_aggregator.len(), 0, "votes not cleared");
     }
+
+    #[test]
+    fn vote_for_proposal_with_highest_hash() {
+        let snapshot_number = 0;
+        let proposal1 = Proposal::new(vec![], &PrivateKey::from(1), snapshot_number);
+        let proposal2 = Proposal::new(vec![], &PrivateKey::from(2), snapshot_number);
+        let proposal3 = Proposal::new(vec![], &PrivateKey::from(3), snapshot_number);
+        let proposal4 = Proposal::new(vec![], &PrivateKey::from(4), snapshot_number);
+
+        let highest_hash = [
+            proposal1.hash(),
+            proposal2.hash(),
+            proposal3.hash(),
+            proposal4.hash(),
+        ]
+        .into_iter()
+        .max()
+        .unwrap();
+
+        let mut proposal_aggregator = Aggregator::<Proposal>::default();
+        proposal_aggregator.add(proposal1);
+        proposal_aggregator.add(proposal2);
+        proposal_aggregator.add(proposal3);
+        proposal_aggregator.add(proposal4);
+
+        let proposal_vote =
+            create_proposal_vote(&proposal_aggregator, &PrivateKey::from(5), snapshot_number);
+
+        assert_eq!(proposal_vote.unwrap().proposal_hash, highest_hash);
+    }
 }
