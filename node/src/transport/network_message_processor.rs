@@ -198,7 +198,7 @@ impl NetworkMessageProcessor {
             }
             #[cfg(feature = "ledger_snapshots")]
             Message::SnapshotPreproposal(preproposal) => {
-                self.ledger_snapshots.receive_preproposal(preproposal);
+                self.ledger_snapshots.handle_preproposal(preproposal);
             }
             #[cfg(feature = "ledger_snapshots")]
             Message::SnapshotProposal(proposal) => {

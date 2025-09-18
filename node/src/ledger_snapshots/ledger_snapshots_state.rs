@@ -15,7 +15,7 @@ pub(crate) struct LedgerSnapshotsState {
 }
 
 impl LedgerSnapshotsState {
-    pub(crate) fn receive_preproposal(&mut self, preproposal: Preproposal) -> bool {
+    pub(crate) fn add_preproposal(&mut self, preproposal: Preproposal) -> bool {
         if preproposal.snapshot_number != self.current_snapshot_number {
             return false;
         }
@@ -123,7 +123,7 @@ mod tests {
             &PrivateKey::from(1),
             state.current_snapshot_number - 1,
         );
-        state.receive_preproposal(preproposal1.clone());
+        state.add_preproposal(preproposal1.clone());
 
         assert!(state.preproposal_aggregator.is_empty());
 
@@ -132,7 +132,7 @@ mod tests {
             &PrivateKey::from(1),
             state.current_snapshot_number + 1,
         );
-        state.receive_preproposal(preproposal2.clone());
+        state.add_preproposal(preproposal2.clone());
 
         assert!(state.preproposal_aggregator.is_empty());
     }
@@ -201,7 +201,7 @@ mod tests {
         let proposal = Proposal::new([&preproposal], &rep_key, snapshot_number);
         let proposal_vote = ProposalVote::new(ProposalHash::from(123), &rep_key, snapshot_number);
 
-        state.receive_preproposal(preproposal);
+        state.add_preproposal(preproposal);
         state.receive_proposal(proposal);
         let consensus_params = ConsensusParams {
             rep_weights: weights,
